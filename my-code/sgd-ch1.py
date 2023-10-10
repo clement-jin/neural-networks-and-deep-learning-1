@@ -32,7 +32,16 @@ class Network:
 
     def update_mini_batch(self, mini_batch, eta):
         """updates weights and biases according to the gradient calculated from the mini-batch."""
-        pass
+        nabla_w = [np.zeroes(weights.shape) for weights in self.weights]
+        nabla_b = [np.zeroes(biases.shape) for biases in self.biases]
+
+        for x, y in mini_batch:
+            delta_nabla_b, delta_nabla_w = self.backprop(x, y)
+            nabla_b = [nb + dnb for nb, dnb in zip(nabla_b, delta_nabla_b)]
+            nabla_w = [nw + dnw for nw, dnw in zip(nabla_w, delta_nabla_w)]
+        
+        self.biases = [biases - eta*nb/len(mini_batch) for biases, nb in zip(self.biases, nabla_b)]
+        self.weights = [weights - eta*nw/len(mini_batch) for weights, nw in zip(self.weights, nabla_w)]
 
     def backprop(self, x, y):
         pass
