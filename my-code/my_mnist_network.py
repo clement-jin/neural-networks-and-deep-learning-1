@@ -1,6 +1,6 @@
 import numpy as np
 import random
-import matplotlib.pyplot as plt
+import json
 
 class Network:
     def __init__(self, sizes) -> None:
@@ -90,6 +90,21 @@ class Network:
     def cost_derivative(self, output_activations, y):
         """returns a vector of partial derivatives dC/da where a is an output neuron, for every a"""
         return (output_activations - y)
+    
+    def save(self, filename):
+        data = {"sizes" : self.sizes,
+            "weights" : [w.tolist() for w in self.weights],
+            "biases": [b.tolist() for b in self.biases],
+            "cost" : self.cost_function}
+
+        with open(filename, "w") as f:
+            json.dump(data, f)
+
+    def load(self, filename):
+        with open(filename, "r") as f:
+            data = json.load(f)
+        self.weights = [np.array(w) for w in data["weights"]]
+        self.biases = [np.array(b) for b in data["biases"]]
 
 
 
@@ -100,19 +115,3 @@ def sigmoid(z):
 
 def sigmoid_prime(z):
     return sigmoid(z)*(1-sigmoid(z))
-
-
-
-# tests are here because I'm practical.
-
-
-
-net = Network([2, 3, 3])
-# o = net.feedforward(np.array([1, 1]))
-# print(o)
-
-
-# plt.plot(net.sigmoid(np.linspace(-5, 5, 50)))
-# plt.show()
-
-
